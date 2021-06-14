@@ -1,46 +1,62 @@
 ---
-version: '3'
+version: "3"
 services:
-  postgres:
-    image: debezium/postgres
-    hostname: postgres
-    container_name: postgres
-    ports: 
-      - "5432:5432"
-    environment:
-      ACCEPT_EULA: Y
-      POSTGRES_USER: kafkasandbox
-      POSTGRES_PASSWORD: kafkasandboxpass
-      POSTGRES_DB: kafkasandboxdb
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
   zookeeper:
     image: debezium/zookeeper
     ports:
-     - 2181:2181
-     - 2888:2888
-     - 3888:3888
-    container_name: zookeeper
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    container_name: cdc_zookeeper
+    networks:
+      - cdc_network
+
   kafka:
     image: debezium/kafka
     ports:
-     - 9092:9092
+      - 9092:9092
     links:
-     - zookeeper
+      - zookeeper
     environment:
-      ZOOKEEPER_CONNECT: "zookeeper:2181"
-    container_name: kafka
-  connect:
+      ZOOKEEPER_CONNECT: "cdc_zookeeper:2181"
+    container_name: cdc_kafka
+    networks:
+      - cdc_network
+
+  postgres:
+    image: debezium/postgres
+    hostname: postgres
+    container_name: cdc_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      ACCEPT_EULA: Y
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: tender
+    networks:
+      - cdc_network
+    # volumes:
+    #   - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  debezium:
+    container_name: cdc_debezium
     build:
       context: debezium-jdbc
     ports:
-     - 8083:8083
+      - 8083:8083
     links:
-     - kafka
-     - postgres
+      - kafka
+      - postgres
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       GROUP_ID: 1
       CONFIG_STORAGE_TOPIC: "my_connect_configs"
       OFFSET_STORAGE_TOPIC: "my_connect_offsets"
-      TOPIC_CREATION_ENABLE: 'true'
+      TOPIC_CREATION_ENABLE: "true"
+    networks:
+      - cdc_network
+
+networks:
+  cdc_network:
+    driver: bridge
