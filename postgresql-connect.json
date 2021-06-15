@@ -7,7 +7,6 @@
     "database.user": "user",
     "database.password": "password",
     "database.dbname": "tender",
-    "database.server.name": "postgres",
-    "table.include.list": "public.data"
+    "database.server.name": "postgres"
   }
 }

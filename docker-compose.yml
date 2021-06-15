@@ -23,6 +23,20 @@ services:
     networks:
       - cdc_network
 
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: cdc_kafka-ui
+    ports:
+      - "8080:8080"
+    links:
+      - kafka
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+    networks:
+      - cdc_network
+
   postgres:
     image: debezium/postgres
     hostname: postgres
