@@ -7,6 +7,8 @@
     "database.user": "user",
     "database.password": "password",
     "database.dbname": "tender",
-    "database.server.name": "postgres"
+    "database.server.name": "postgres",
+    "table.include.list": "public.bids, public.bid_deliveries, public.bid_delivery_items",
+    "decimal.handling.mode": "double"
   }
 }
