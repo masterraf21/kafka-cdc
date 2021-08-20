@@ -1,14 +1,18 @@
 {
-  "name": "tender-table",
+  "name": "tender",
   "config": {
     "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
     "database.hostname": "postgres",
     "database.port": "5432",
-    "database.user": "user",
+    "database.user": "postgres",
     "database.password": "password",
     "database.dbname": "tender",
     "database.server.name": "postgres",
-    "table.include.list": "public.bids, public.bid_deliveries, public.bid_delivery_items",
-    "decimal.handling.mode": "double"
+    "table.include.list": "public.bids, public.bid_deliveries, public.bid_delivery_items,
+    public.quotations, public.quotation_deliveries, public.quotation_delivery_items,
+    public.trade_confirmations, public.trade_confirmation_deliveries, public.trade_confirmation_delivery_items",
+    "decimal.handling.mode": "string",
+    "provide.transaction.metadata": true,
+    "plugin.name": "pgoutput"
   }
 }
